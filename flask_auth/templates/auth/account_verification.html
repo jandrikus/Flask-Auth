@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% from 'auth/lib.html' import account_verification with context %}
+
+{% block head %}
+	{{ super() }}
+	<title>{{ _("Account verification") }}</title>
+{% endblock head %}
+
+{% block container %}
+	<div class="row" id="auth_register_nav">
+		<ol class="list-group flex-row mx-auto">
+			<li class="list-group-item">
+				<strong>{{ _("Step 1") }}</strong>
+				{{ _("Basic Information") }}
+			</li>
+			<li class="list-group-item active">
+				<strong>{{ _("Step 2") }}</strong>
+				{{ _("Verify Your Identity") }}
+			</li>
+		</ol>
+	</div>
+	<h1 class="h3 mb-3 font-weight-normal">{{ _("Account verification") }}</h1>
+	{{ account_verification(url_for('auth.get_verify_account_token'), email=current_user.student_email, sent=sent) }}
+{% endblock container %}

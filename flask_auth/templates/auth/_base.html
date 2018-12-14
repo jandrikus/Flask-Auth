@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% block head %}
+			<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<!-- bootstrap Stuff -->
+			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+			<link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+			<!-- flask-auth Stuff -->
+			<link rel="stylesheet" href="{{ url_for('auth.static', filename='style.css') }}">
+			{# *** To add your own stuff, please call super() first *** #}
+		{% endblock head %}
+	</head>
+	<body>
+		{% block body %}
+			{% block navbar %}
+			{% endblock navbar %}
+
+			{% block content %}
+				<div class="container-fluid">
+					{% block container %}
+					{% endblock container %}
+				</div>
+			{% endblock content %}
+
+			{% block footer %}
+				<footer>
+					{% include 'auth/_footer.html' %}
+				</footer>
+			{% endblock footer %}
+		{% endblock body %}
+
+		{% block body_scripts %}
+			<!-- jquery Stuff -->
+			<script src="//code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+			<script src="//code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+			<!-- bootstrap Stuff -->
+			<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+			<script src="//stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+			{# *** To add your own stuff, please call super() first *** #}
+		{% endblock body_scripts %}
+	</body>
+</html>

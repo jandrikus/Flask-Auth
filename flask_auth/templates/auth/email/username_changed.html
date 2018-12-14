@@ -1,0 +1,6 @@
+{% extends 'auth/email/base.html' %}
+
+{% block message %}
+	<p>Your username has been changed.</p>
+	<p>If you did not initiate this username change, please <a href="{{ url_for('auth.login', _external=True) }}">sign in</a> (using your email address) and change your password.</p>
+{% endblock %}

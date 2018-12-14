@@ -1,0 +1,23 @@
+{% extends 'auth/_base.html' %}
+{% from 'auth/_lib.html' import form_register with context %}
+
+{% block head %}
+	{{ super() }}
+	<title>{{ _("Register") }}</title>
+{% endblock head %}
+
+{% block container %}
+	<div class="row" id="auth_register_nav">
+		<ol class="list-group flex-row mx-auto">
+			<li class="list-group-item active">
+				<strong>{{ _("Step 1") }}</strong>
+				{{ _("Basic Information") }}
+			</li>
+			<li class="list-group-item">
+				<strong>{{ _("Step 2") }}</strong>
+				{{ _("Verify Your Identity") }}
+			</li>
+		</ol>
+	</div>
+	{{ form_register(url_for('auth.register'), form) }}
+{% endblock container %}

@@ -1,0 +1,18 @@
+{% extends 'auth/_base.html' %}
+{% from 'auth/_lib.html' import form_login with context %}
+
+{% block head %}
+	{{ super() }}
+	<title>{{ _("Login") }}</title>
+{% endblock head %}
+
+{% block body %}
+	<div class="text-center m-auto">
+		{{ form_login(form, url_for('auth.login', next=request.url), url_for('auth.register'), url_for('auth.forgot_password'), url_for('home_page'), logo_img='etseib.png') }}
+	</div>
+	<div class="d-none d-lg-block">
+		{% block footer %}
+			{{ super() }}
+		{% endblock footer %}
+	</div>
+{% endblock body %}

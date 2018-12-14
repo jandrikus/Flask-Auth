@@ -1,0 +1,366 @@
+{% macro render_field(field, label=None, label_visible=true, right_url=None, right_label=None) -%}
+	<div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
+		{% if field.type != 'HiddenField' and label_visible %}
+			{% if not label %}{% set label=field.label.text %}{% endif %}
+			<label for="{{ field.id }}" class="control-label">{{ label|safe }}</label>
+		{% endif %}
+		{{ field(class_='form-control', **kwargs) }}
+		{% if field.errors %}
+			{% for e in field.errors %}
+				<p class="form-text" style="color: red;">{{ e }}</p>
+			{% endfor %}
+		{% endif %}
+	</div>
+{%- endmacro %}
+
+{% macro render_checkbox_field(field, label=None) -%}
+	{% if not label %}{% set label=field.label.text %}{% endif %}
+	<div class="checkbox">
+		<label>
+			{{ field(type='checkbox', **kwargs) }} {{ label }}
+		</label>
+	</div>
+{%- endmacro %}
+
+{% macro render_radio_field(field) -%}
+	{% for value, label, checked in field.iter_choices() %}
+		<div class="radio">
+			<label>
+				<input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}"{% if checked %} checked{% endif %}>
+				{{ label }}
+			</label>
+		</div>
+	{% endfor %}
+{%- endmacro %}
+
+{% macro form_login(form, endpoint_login, endpoint_register, endpoint_forgot, endpoint_index, logo_img='') %}
+	<form action="{{ endpoint_login }}" method="post" class="form-signin">
+		{% if logo_img %}
+			<a href="{{ endpoint_index }}">
+				<img class="mb-4" src="/static/images/{{ logo_img }}" alt="" width="72" height="72">
+			</a>
+		{% endif %}
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal text-center">{%trans%}Sign in{%endtrans%}</h1>
+		{# Username or Email field #}
+		{% set field = form.username if auth.AUTH_ENABLE_USERNAME else form.email %}
+		<div class="form-group {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="sr-only">{{ field.label.text }}</label>
+			{{ field(class_='form-control', placeholder=field.label.text, autofocus='true') }}
+			{% if field.errors %}
+				{% for e in field.errors %}
+					<p class="form-text" style="color: red;">{{ e }}</p>
+				{% endfor %}
+			{% endif %}
+		</div>
+		{# Password field #}
+		{% set field = form.password %}
+		<div class="form-group {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="sr-only">{{ field.label.text }}</label>
+			{{ field(class_='form-control', placeholder=field.label.text) }}
+			{% if field.errors %}
+				{% for e in field.errors %}
+					<p class="form-text" style="color: red;">{{ e }}</p>
+				{% endfor %}
+			{% endif %}
+		</div>
+		{# Remember me #}
+		{% if auth.AUTH_ENABLE_REMEMBER_ME %}
+			{% set field = form.remember_me %}
+			<div class="checkbox mb-1">
+				<label>
+					{{ field(type='checkbox', **kwargs) }} {{ field.label.text }}
+				</label>
+			</div>
+		{% endif %}
+		{# Submit button #}
+		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
+		{% if auth.AUTH_ENABLE_REGISTER or auth.AUTH_ENABLE_FORGOT_PASSWORD %}
+			<br>
+		{% endif %}
+		{% if auth.AUTH_ENABLE_REGISTER %}
+			<p>
+				<a href="{{ endpoint_register }}">
+					{%trans%}New here? Register{%endtrans%}
+				</a>
+			</p>
+		{% endif %}
+		{% if auth.AUTH_ENABLE_FORGOT_PASSWORD %}
+			<p>
+				<a href="{{ endpoint_forgot }}">
+					{%trans%}I forgot my password{%endtrans%}
+				</a>
+			</p>
+		{% endif %}
+
+	</form>
+{% endmacro %}
+
+{% macro form_change_password(endpoint_change_password, form) %}
+	<form action="{{ endpoint_change_password }}" class="form-group" method="post">
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal">{%trans%}Change password{%endtrans%}</h1>
+		{# Old password #}
+		{% set field = form.old_password %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your current password") }}.</small>
+			</div>
+		</div>
+		{# Password #}
+		{% set field = form.password %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("At least 8 characters") }}.</small>
+			</div>
+		</div>
+		{# Retype Password #}
+		{% if auth.AUTH_REQUIRE_RETYPE_PASSWORD %}
+			{% set field = form.retype_password %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
+	</form>
+{% endmacro %}
+
+{% macro form_change_username(endpoint_change_username, form) %}
+	<form action="{{ endpoint_change_username }}" class="form-group" method="post">
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal">{%trans%}Change username{%endtrans%}</h1>
+		{# New username #}
+		{% set field = form.new_username %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your new desired username") }}.</small>
+			</div>
+		</div>
+		{# Password #}
+		{% set field = form.password %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your current password") }}.</small>
+			</div>
+		</div>
+		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
+	</form>
+{% endmacro %}
+
+{% macro form_forgot_password(endpoint_forgot_password, form) %}
+	<form action="{{ endpoint_forgot_password }}" class="form-group" method="post">
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal">{%trans%}Forgot password{%endtrans%}</h1>
+		{# Username #}
+		{% if auth.AUTH_ENABLE_USERNAME %}
+			{% set field = form.username %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(size=64, class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your username") }}.</small>
+				</div>
+			</div>
+		{% endif %}
+		{# Email #}
+		{% if auth.AUTH_ENABLE_EMAIL %}
+			{% set field = form.email %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(size=128, class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("A valid email address") }}.</small>
+				</div>
+			</div>
+		{% endif %}
+		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
+	</form>
+{% endmacro %}
+
+{% macro form_register(endpoint_register, form) %}
+	<form action="{{ endpoint_register }}" method="post" class="form-group">
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal">{{ _("Register") }}</h1>
+		{# Username #}
+		{% if auth.AUTH_ENABLE_USERNAME %}
+			{% set field = form.username %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(size=64, class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your username") }}.</small>
+				</div>
+			</div>
+		{% endif %}
+		{# First name and Last name #}
+		{% set field = form.first_name %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(size=64, class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your first name") }}</small>
+			</div>
+		</div>
+		{% set field = form.last_name %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(size=128, class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your last names (name of your family)") }}</small>
+			</div>
+		</div>
+		{# Email #}
+		{% if auth.AUTH_ENABLE_EMAIL %}
+			{% set field = form.email %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(size=128, class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("A valid email address") }}.</small>
+				</div>
+			</div>
+		{% endif %}
+		{# Language #}
+		{% set field = form.language %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+			</div>
+		</div>
+		{# Password #}
+		{% set field = form.password %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("At least 8 characters") }}.</small>
+			</div>
+		</div>
+		{# Retype Password #}
+		{% if auth.AUTH_REQUIRE_RETYPE_PASSWORD %}
+			{% set field = form.retype_password %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
+		{% if auth.AUTH_ENDPOINT_POLICIES_TERMS or auth.AUTH_ENDPOINT_POLICIES_PRIVACY %}
+			<p class="form-control-note mb-0 text-center">
+				{{ _("By clicking &ldquo;Sign Up&rdquo;, you agree to our") }}:
+				{% if auth.AUTH_ENDPOINT_POLICIES_TERMS %}
+					<a class="" href="{{ auth.AUTH_ENDPOINT_POLICIES_TERMS }}" target="_blank">{{ _("Terms of Service") }}</a> 
+				{% endif %}
+				{% if auth.AUTH_ENDPOINT_POLICIES_PRIVACY %}
+					<a class="" href="{{ auth.AUTH_ENDPOINT_POLICIES_PRIVACY }}" target="_blank">{{ _("Privacy Statement") }}</a>
+				{% endif %}
+			</p>
+		{% endif %}
+	</form>
+{% endmacro %}
+
+{% macro form_reset_password(endpoint_reset_password) %}
+	<form action="{{ endpoint_reset_password }}" class="form-group" method="post">
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal">{%trans%}Reset password{%endtrans%}</h1>
+		{# New password #}
+		{% set field = form.new_password %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("At least 8 characters") }}.</small>
+			</div>
+		</div>
+		{# Retype Password #}
+		{% if auth.AUTH_REQUIRE_RETYPE_PASSWORD %}
+			{% set field = form.retype_password %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
+	</form>
+{% endmacro %}
+
+{% macro account_verification(endpoint_resend_account_verification, email, sent=False) %}
+	<div class="form-group row">
+		<label for="verify_account" class="col-sm-4 col-form-label">{{ _("Verify yourself") }}</label>
+		<div class="col-sm-6">
+			<p>{{ _("An email has been sent to %(email)s for you to verify your account", email = email) }}.</p>
+			<small class="form-text text-muted">{{ _('This process may last up to 10 minutes depending on the email provider') }}</small>
+			<small id="verify_accountHelp" class="form-text text-muted">{{ _('Look in your SPAM folder in case you don\'t get this message properly') }}</small>
+		</div>
+		<div class="col-sm-2">
+			<a class="btn btn-primary" href="{{ endpoint_resend_account_verification }}">{{ _("Resend email") }}</a>
+		</div>
+		{% if sent %}
+			<p>{{ _("New email sent") }}</p>
+		{% endif %}
+	</div>
+{% endmacro %}

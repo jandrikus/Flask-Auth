@@ -169,7 +169,7 @@ class Auth__Views(object):
 	def login(self):
 		# Prepare and process the login form.
 		# Authenticate username/email and login authenticated users.
-		safe_next_url = self._get_safe_next_url('next')
+		safe_next_url = self._get_safe_next_url('next', self.AUTH_ENDPOINT_AFTER_LOGIN)
 		# Immediately redirect already logged in users
 		if current_user.is_authenticated and self.AUTH_AUTO_LOGIN_AT_LOGIN:
 			return redirect(safe_next_url)
@@ -179,6 +179,7 @@ class Auth__Views(object):
 		if request.method == 'POST' and form.validate():
 			# Retrieve User
 			user = None
+			print('hehee2')
 			if self.AUTH_ENABLE_LOGIN_BY_USERNAME:
 				# Find user record by username
 				user = self.db_manager.find_user_by_username(form.username.data)
@@ -188,6 +189,7 @@ class Auth__Views(object):
 			else:
 				# Find user by email (with form.email)
 				user = self.db_manager.find_user_by_email(form.email.data)
+			print('hehee')
 			if user:
 				# Check if user has a confirmed account (if required)
 				if self.AUTH_ENABLE_CONFIRM_ACCOUNT and not self.AUTH_ALLOW_LOGIN_WITHOUT_CONFIRMED_ACCOUNT and not user.verified:
@@ -195,10 +197,11 @@ class Auth__Views(object):
 					flash(_('Your account has not yet been confirmed. Check your email Inbox and Spam folders for the confirmation email or <a href="%(url)s">Re-send confirmation email</a>.', url=url), 'error')
 					return redirect(url_for('auth.account_verification'))
 				# Log user in
+				print('here')
 				return self._do_login_user(user, safe_next_url, form.remember_me.data)
 		# Render form
 		self.prepare_domain_translations()
-		return render_template('auth/login.html', form=form)
+		return render_template('auth/login.html', form=form, safe_next_url=safe_next_url)
 
 	def logout(self):
 		# Process the logout link.
@@ -342,7 +345,7 @@ class Auth__Views(object):
 		# Redirect to 403 error page
 		return abort(403)
 
-	def _do_login_user(self, user, safe_next_url, remember_me=False):
+	def _do_login_user(self, user, safe_next_url='', remember_me=False):
 		# User must have been authenticated
 		if not user: return self.unauthenticated()
 		# Check if user account has been disabled
@@ -360,7 +363,7 @@ class Auth__Views(object):
 		# Flash a system message
 		flash(_('You have signed in successfully.'), 'success')
 		# Redirect to 'next' URL
-		return redirect(safe_next_url)
+		return redirect(safe_next_url or url_for(self.AUTH_ENDPOINT_AFTER_LOGIN))
 
 	# Returns safe URL from query param ``param_name`` if query param exists.
 	# Returns url_for(default_endpoint) otherwise.

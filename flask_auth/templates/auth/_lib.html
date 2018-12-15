@@ -1,49 +1,14 @@
-{% macro render_field(field, label=None, label_visible=true, right_url=None, right_label=None) -%}
-	<div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
-		{% if field.type != 'HiddenField' and label_visible %}
-			{% if not label %}{% set label=field.label.text %}{% endif %}
-			<label for="{{ field.id }}" class="control-label">{{ label|safe }}</label>
-		{% endif %}
-		{{ field(class_='form-control', **kwargs) }}
-		{% if field.errors %}
-			{% for e in field.errors %}
-				<p class="form-text" style="color: red;">{{ e }}</p>
-			{% endfor %}
-		{% endif %}
-	</div>
-{%- endmacro %}
-
-{% macro render_checkbox_field(field, label=None) -%}
-	{% if not label %}{% set label=field.label.text %}{% endif %}
-	<div class="checkbox">
-		<label>
-			{{ field(type='checkbox', **kwargs) }} {{ label }}
-		</label>
-	</div>
-{%- endmacro %}
-
-{% macro render_radio_field(field) -%}
-	{% for value, label, checked in field.iter_choices() %}
-		<div class="radio">
-			<label>
-				<input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}"{% if checked %} checked{% endif %}>
-				{{ label }}
-			</label>
-		</div>
-	{% endfor %}
-{%- endmacro %}
-
-{% macro form_login(form, endpoint_login, endpoint_register, endpoint_forgot, endpoint_index, logo_img='') %}
+{% macro form_login(form, endpoint_login, endpoint_register, endpoint_forgot, endpoint_index) %}
 	<form action="{{ endpoint_login }}" method="post" class="form-signin">
-		{% if logo_img %}
+		{% if auth.AUTH_LOGO_IMG_URL %}
 			<a href="{{ endpoint_index }}">
-				<img class="mb-4" src="/static/images/{{ logo_img }}" alt="" width="72" height="72">
+				<img class="mb-4" src="{{ auth.AUTH_LOGO_IMG_URL }}" alt="" width="72" height="72">
 			</a>
 		{% endif %}
 		{{ form.hidden_tag() }}
 		<h1 class="h3 mb-3 font-weight-normal text-center">{%trans%}Sign in{%endtrans%}</h1>
 		{# Username or Email field #}
-		{% set field = form.username if auth.AUTH_ENABLE_USERNAME else form.email %}
+		{% set field = form.username if auth.AUTH_ENABLE_LOGIN_BY_USERNAME else form.email %}
 		<div class="form-group {% if field.errors %}has-error{% endif %}">
 			<label for="{{ field.id }}" class="sr-only">{{ field.label.text }}</label>
 			{{ field(class_='form-control', placeholder=field.label.text, autofocus='true') }}

@@ -8,7 +8,7 @@
 
 {% block body %}
 	<div class="text-center m-auto">
-		{{ form_login(form, url_for('auth.login', next=request.url), url_for('auth.register'), url_for('auth.forgot_password'), url_for('home_page'), logo_img='etseib.png') }}
+		{{ form_login(form, url_for('auth.login', next=safe_next_url), url_for('auth.register'), url_for('auth.forgot_password'), url_for('home_page')) }}
 	</div>
 	<div class="d-none d-lg-block">
 		{% block footer %}

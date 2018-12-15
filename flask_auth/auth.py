@@ -14,11 +14,10 @@ from .db_manager import DBManager
 from .email_manager import EmailManager
 from .password_manager import PasswordManager
 from .token_manager import TokenManager
-from .translation_utils import lazy_gettext as _  # map _() to lazy_gettext()
+from .translation_utils import lazy_gettext as _l # map _l() to lazy_gettext()
 from .auth__settings import Auth__Settings
 from .auth__utils import Auth__Utils
 from .auth__views import Auth__Views
-
 
 # The Auth is implemented across several source code files.
 # Mixins are used to aggregate all member functions into the one Auth class for ease of customization.
@@ -73,22 +72,6 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 				default_value = getattr(Auth, attrib_name)
 				setattr(self, attrib_name, app.config.get(attrib_name, default_value))
 
-		# If AUTH_EMAIL_SENDER_EMAIL is not set, try to construct it from
-		# MAIL_DEFAULT_SENDER or DEFAULT_MAIL_SENDER
-		if not self.AUTH_EMAIL_SENDER_EMAIL:
-			default_sender = app.config.get('DEFAULT_MAIL_SENDER', None)
-			default_sender = app.config.get('MAIL_DEFAULT_SENDER', default_sender)
-			if default_sender:
-				# Accept two formats: '{name}<{email}>' or plain '{email}'
-				if default_sender[-1:] == '>':
-					start = default_sender.rfind('<')
-					if start >= 1:
-						self.AUTH_EMAIL_SENDER_EMAIL = default_sender[start + 1:-1]
-						if not self.AUTH_EMAIL_SENDER_NAME:
-							self.AUTH_EMAIL_SENDER_NAME = default_sender[0:start].strip(' "')
-				else:
-					self.AUTH_EMAIL_SENDER_EMAIL = default_sender
-
 		# If AUTH_EMAIL_SENDER_NAME is not set, default it to AUTH_APP_NAME
 		if not self.AUTH_EMAIL_SENDER_NAME:
 			self.AUTH_EMAIL_SENDER_NAME = self.AUTH_APP_NAME
@@ -97,7 +80,6 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		# --------------------------------
 		if self.AUTH_USER_SESSION_EXPIRATION:
 			app.permanent_session_lifetime = datetime.timedelta(seconds=self.AUTH_USER_SESSION_EXPIRATION)
-
 			@app.before_request
 			def advance_session_timeout():
 				session.permanent = True    # Timeout after app.permanent_session_lifetime period

@@ -1,0 +1,485 @@
+# Turkish translations for PROJECT.
+# Copyright (C) 2015 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2018-12-15 08:47+0100\n"
+"PO-Revision-Date: 2016-08-15 09:56+0300\n"
+"Last-Translator: aripddev <dev@aripd.com>\n"
+"Language: tr\n"
+"Language-Team: tr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: auth__views.py:38
+msgid "Your password has been changed successfully."
+msgstr "Parolanız başarı ile değiştirildi."
+
+#: auth__views.py:63
+#, python-format
+msgid "Your username has been changed to '%(username)s'."
+msgstr "Kullanıcı adınız '%(username)s' olarak değiştirildi."
+
+#: auth__views.py:86
+#, python-format
+msgid "Your email has been changed from %(old_email)s to '%(new_email)s'."
+msgstr ""
+
+#: auth__views.py:125
+#, python-format
+msgid ""
+"A reset password email has been sent to '%(email)s'. Open that email and "
+"follow the instructions to reset your password."
+msgstr ""
+"Parolanızın sıfırlanması için %(email)s adresine talimatları içeren bir "
+"eposta gönderildi "
+
+#: auth__views.py:128
+msgid "The given information does not match"
+msgstr ""
+
+#: auth__views.py:142
+msgid "Your reset password token is invalid."
+msgstr "Parola sıfırlama anahtarınız geçersiz."
+
+#: auth__views.py:158
+msgid "Your password has been reset successfully."
+msgstr "Parolanız başarı ile sıfırlandı."
+
+#: auth__views.py:197
+#, python-format
+msgid ""
+"Your account has not yet been confirmed. Check your email Inbox and Spam "
+"folders for the confirmation email or <a href=\"%(url)s\">Re-send "
+"confirmation email</a>."
+msgstr ""
+
+#: auth__views.py:214
+msgid "You have signed out successfully."
+msgstr "Başarı ile çıkış yaptınız."
+
+#: auth__views.py:249
+#, python-format
+msgid ""
+"A confirmation email has been sent to %(email)s with instructions to "
+"complete your registration."
+msgstr ""
+"Kaydınızın tamamlanması için %(email)s adresine talimatları içeren bir "
+"eposta gönderildi "
+
+#: auth__views.py:264
+msgid "You have registered successfully."
+msgstr "Kaydınız başarı ile gerçekleştirildi."
+
+#: auth__views.py:302
+#, python-format
+msgid ""
+"A confirmation email has been sent again to %(email)s with instructions "
+"to complete your registration."
+msgstr ""
+
+#: auth__views.py:312
+msgid "Invalid confirmation token."
+msgstr "Doğrulama anahtarınız geçersiz."
+
+#: auth__views.py:327
+#, python-format
+msgid "Welcome to %(app_name)s"
+msgstr ""
+
+#: auth__views.py:337
+#, python-format
+msgid "You must be signed in to access '%(url)s'."
+msgstr "'%(url)s' adresine erişmek için giriş yapmalısınız."
+
+#: auth__views.py:344
+#, python-format
+msgid "You do not have permission to access '%(url)s'."
+msgstr "'%(url)s' adresine erişim izniniz yok."
+
+#: auth__views.py:353
+msgid "Your account has been disabled."
+msgstr ""
+
+#: auth__views.py:364
+msgid "You have signed in successfully."
+msgstr "Başarı ile giriş yaptınız."
+
+#: email_manager.py:55
+msgid "Your password has been changed"
+msgstr ""
+
+#: email_manager.py:75
+msgid "Your username has been changed"
+msgstr ""
+
+#: email_manager.py:95 email_manager.py:101
+msgid "Your email has been changed"
+msgstr ""
+
+#: email_manager.py:123 templates/auth/reset_password.html:6
+msgid "Reset Password"
+msgstr "Parolayı sıfırla"
+
+#: email_manager.py:145
+msgid "Account Confirmation"
+msgstr ""
+
+#: email_manager.py:163
+#, python-format
+msgid "Wellcome to %(app_name)s"
+msgstr ""
+
+#: templates/auth/_lib.html:9
+msgid "Sign in"
+msgstr "Giriş yap"
+
+#: templates/auth/_lib.html:49
+msgid "New here? Register"
+msgstr ""
+
+#: templates/auth/_lib.html:56
+msgid "I forgot my password"
+msgstr ""
+
+#: templates/auth/_lib.html:67 templates/auth/change_password.html:6
+msgid "Change password"
+msgstr "Parolayı değiştir"
+
+#: templates/auth/_lib.html:77 templates/auth/_lib.html:141
+msgid "Your current password"
+msgstr ""
+
+#: templates/auth/_lib.html:89 templates/auth/_lib.html:286
+#: templates/auth/_lib.html:330
+msgid "At least 8 characters"
+msgstr ""
+
+#: templates/auth/_lib.html:112 templates/auth/change_username.html:6
+msgid "Change username"
+msgstr "Kullanıcı adını değiştir"
+
+#: templates/auth/_lib.html:115
+msgid "Current username"
+msgstr ""
+
+#: templates/auth/_lib.html:129
+msgid "Your new desired username"
+msgstr ""
+
+#: templates/auth/_lib.html:151 templates/auth/change_email.html:6
+msgid "Change Email"
+msgstr ""
+
+#: templates/auth/_lib.html:154
+msgid "Current Email"
+msgstr ""
+
+#: templates/auth/_lib.html:168
+msgid "Your new email"
+msgstr ""
+
+#: templates/auth/_lib.html:178 templates/auth/forgot_password.html:6
+msgid "Forgot password"
+msgstr ""
+
+#: templates/auth/_lib.html:189 templates/auth/_lib.html:225
+msgid "Your username"
+msgstr ""
+
+#: templates/auth/_lib.html:203 templates/auth/_lib.html:262
+msgid "A valid email address"
+msgstr ""
+
+#: templates/auth/_lib.html:214 templates/auth/register.html:6
+msgid "Register"
+msgstr "Kayıt ol"
+
+#: templates/auth/_lib.html:238
+msgid "Your first name"
+msgstr ""
+
+#: templates/auth/_lib.html:249
+msgid "Your last names (name of your family)"
+msgstr ""
+
+#: templates/auth/_lib.html:305
+msgid "By clicking &ldquo;Sign Up&rdquo;, you agree to our"
+msgstr ""
+
+#: templates/auth/_lib.html:307
+msgid "Terms of Service"
+msgstr ""
+
+#: templates/auth/_lib.html:310
+msgid "Privacy Statement"
+msgstr ""
+
+#: templates/auth/_lib.html:320
+msgid "Reset password"
+msgstr ""
+
+#: templates/auth/_lib.html:352
+msgid "Verify yourself"
+msgstr ""
+
+#: templates/auth/_lib.html:354
+#, python-format
+msgid "An email has been sent to %(email)s for you to verify your account"
+msgstr ""
+
+#: templates/auth/_lib.html:355
+msgid "This process may last up to 10 minutes depending on the email provider"
+msgstr ""
+
+#: templates/auth/_lib.html:356
+msgid "Look in your SPAM folder in case you don't get this message properly"
+msgstr ""
+
+#: templates/auth/_lib.html:359
+msgid "Resend email"
+msgstr ""
+
+#: templates/auth/_lib.html:362
+msgid "New email resent"
+msgstr ""
+
+#: templates/auth/account_verification.html:6
+#: templates/auth/account_verification.html:22
+msgid "Account verification"
+msgstr ""
+
+#: templates/auth/account_verification.html:13 templates/auth/register.html:13
+msgid "Step 1"
+msgstr ""
+
+#: templates/auth/account_verification.html:14 templates/auth/register.html:14
+msgid "Basic Information"
+msgstr ""
+
+#: templates/auth/account_verification.html:17 templates/auth/register.html:17
+msgid "Step 2"
+msgstr ""
+
+#: templates/auth/account_verification.html:18 templates/auth/register.html:18
+msgid "Verify Your Identity"
+msgstr ""
+
+#: templates/auth/login.html:6
+msgid "Login"
+msgstr ""
+
+#: templates/auth/email/error.html:5 templates/auth/email/error.html:9
+msgid "Error sending email"
+msgstr ""
+
+#: templates/auth/email/error.html:11
+msgid ""
+"\n"
+"\t\t\tThere was a problem with the mailing provider. The server might be "
+"out of service. Please, try again later.\n"
+"\t\t"
+msgstr ""
+
+#~ msgid "Your confirmation token has expired."
+#~ msgstr "Doğrulama anahtarınızın süresi dolmuş."
+
+#~ msgid "Your reset password token has expired."
+#~ msgstr "Parola sıfırlama anahtarınızın süresi geçmiş."
+
+#~ msgid "Profile Page"
+#~ msgstr "Profil sayfası"
+
+#~ msgid "Special Page"
+#~ msgstr "Özel sayfa"
+
+#~ msgid "This Username is already in use. Please try another one."
+#~ msgstr ""
+#~ "Kullanımda olan bir kullanıcı adı "
+#~ "girdiniz. Lütfen başka bir tane "
+#~ "deneyiniz."
+
+#~ msgid "This Email is already in use. Please try another one."
+#~ msgstr "Kullanımda olan bir eposta girdiniz. Lütfen başka bir tane deneyiniz."
+
+#~ msgid "Email"
+#~ msgstr "Eposta"
+
+#~ msgid "Email is required"
+#~ msgstr "Eposta zorunlu"
+
+#~ msgid "Invalid Email"
+#~ msgstr "Geçersiz eposta"
+
+#~ msgid "Add Email"
+#~ msgstr "Eposta Ekle"
+
+#~ msgid "Old Password"
+#~ msgstr "Eski parola"
+
+#~ msgid "Old Password is required"
+#~ msgstr "Eski parola zorunlu"
+
+#~ msgid "New Password"
+#~ msgstr "Yeni parola"
+
+#~ msgid "New Password is required"
+#~ msgstr "Yeni parola zorunlu"
+
+#~ msgid "Retype New Password"
+#~ msgstr "Yeni parolayı tekrarlayın"
+
+#~ msgid "New Password and Retype Password did not match"
+#~ msgstr "Yeni parolalar uyuşmuyor"
+
+#~ msgid "Old Password is incorrect"
+#~ msgstr "Eski parola yanlış"
+
+#~ msgid "New Username"
+#~ msgstr "Yeni kullanıcı adı"
+
+#~ msgid "Username is required"
+#~ msgstr "Kullanıcı adı zorunlu"
+
+#~ msgid "Username"
+#~ msgstr "Kullanıcı adı"
+
+#~ msgid "Update"
+#~ msgstr ""
+
+#~ msgid "Password"
+#~ msgstr "Parola"
+
+#~ msgid "Password is required"
+#~ msgstr "Parola zorunlu"
+
+#~ msgid "Remember me"
+#~ msgstr "Beni hatırla"
+
+#~ msgid "Username or Email"
+#~ msgstr "Kullanıcı adı veya Eposta"
+
+#~ msgid "Username/Email"
+#~ msgstr "Kullanıcı adı/Eposta"
+
+#~ msgid "%(username_or_email)s does not exist"
+#~ msgstr "%(username_or_email) bulunamadı"
+
+#~ msgid "Incorrect Password"
+#~ msgstr "Parolanızı mı unuttunuz?"
+
+#~ msgid "Incorrect %(username_or_email)s and/or Password"
+#~ msgstr "Geçersiz %(username_or_email)s ve/veya parola"
+
+#~ msgid "Retype Password"
+#~ msgstr "Parolayı yeniden girin"
+
+#~ msgid "Password and Retype Password did not match"
+#~ msgstr "Parolalar uyuşmuyor"
+
+#~ msgid "Token"
+#~ msgstr "Anahtar"
+
+#~ msgid "Your email address"
+#~ msgstr "Eposta adresiniz"
+
+#~ msgid "Email address is required"
+#~ msgstr "Eposta adresi zorunlu"
+
+#~ msgid "Invalid Email address"
+#~ msgstr "Eposta adresi geçersiz"
+
+#~ msgid "Send reset password email"
+#~ msgstr "Parola sıfırlama epostasını gönder"
+
+#~ msgid "Resend email confirmation email"
+#~ msgstr "Eposta doğrulamayı yeniden gönder"
+
+#~ msgid "Invite!"
+#~ msgstr "Davet et!"
+
+#~ msgid "Sign out"
+#~ msgstr ""
+
+#~ msgid "Home Page"
+#~ msgstr "Ana sayfa"
+
+#~ msgid "User profile"
+#~ msgstr "Kullanıcı profili"
+
+#~ msgid "Member Page"
+#~ msgstr ""
+
+#~ msgid "Admin Page"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Password must have at least 6 "
+#~ "characters with one lowercase letter, "
+#~ "one uppercase letter and one number"
+#~ msgstr ""
+#~ "Parola en az 6 karakter uzunluğunda "
+#~ "olmalı, en az bir küçük harf, bir"
+#~ " büyük harf ve bir rakam içermeli"
+
+#~ msgid "Username must be at least 3 characters long"
+#~ msgstr "Kullanıcı adı en az 3 karakter uzunluğunda olmalı"
+
+#~ msgid "Username may only contain letters, numbers, '-', '.' and '_'"
+#~ msgstr "Kullanıcı adı sadece harf, rakam, '-', '.' ve '_' içerebilir"
+
+#~ msgid "Your email has been confirmed."
+#~ msgstr "Epostanız doğrulandı."
+
+#~ msgid "Invitation has been sent."
+#~ msgstr "Davetiniz gönderildi."
+
+#~ msgid "You must confirm your email to access '%(url)s'."
+#~ msgstr "'%(url)s' adresine erişmek için epostanızı doğrulamalısınız."
+
+#~ msgid "Your account has not been enabled."
+#~ msgstr "Hesabınız etkinleştirilmedi"
+
+#~ msgid ""
+#~ "Your email address has not yet "
+#~ "been confirmed. Check your email Inbox"
+#~ " and Spam folders for the "
+#~ "confirmation email or <a href=\"%(url)s"
+#~ "\">Re-send confirmation email</a>."
+#~ msgstr ""
+#~ "Eposta adresiniz henüz doğrulanmadı. Gelen "
+#~ "ve İstenmeyen kutunuza bakın veya <a "
+#~ "href=\"%(url)s\">Doğrulama epostasını tekrar "
+#~ "gönderin</a>."
+
+#~ msgid "Home page"
+#~ msgstr ""
+
+#~ msgid "Forgot Password"
+#~ msgstr "Parolanızı mı unuttunuz?"
+
+#~ msgid "Invite User"
+#~ msgstr "Kullanıcı davet et"
+
+#~ msgid "New here? Register."
+#~ msgstr "Yeni misiniz? Kayıt olun."
+
+#~ msgid "Forgot your Password?"
+#~ msgstr "Parolanızı mı unuttunuz?"
+
+#~ msgid "Manage Emails"
+#~ msgstr "Epostaları yönet"
+
+#~ msgid "Already registered? Sign in."
+#~ msgstr "Zaten kayıtlı mısınız? Giriş yapın."
+
+#~ msgid "Resend Confirmation Email"
+#~ msgstr "Doğrulama epostasını yeniden gönder"
+

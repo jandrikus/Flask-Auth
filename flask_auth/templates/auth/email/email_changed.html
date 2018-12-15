@@ -1,8 +1,8 @@
 {% extends 'auth/email/base.html' %}
 
 {% block message %}
-	<p>Your password has been changed.</p>
+	<p>Your email has been changed.</p>
 	{% if auth.AUTH_ENABLE_FORGOT_PASSWORD %}
-		<p>If you did not initiate this password change, <a href="{{ url_for('auth.forgot_password', _external=True) }}">click here to reset it</a>.</p>
+		<p>If you did not initiate this email change, <a href="{{ url_for('auth.forgot_password', _external=True) }}">click here to reset your password</a>.</p>
 	{% endif %}
 {% endblock %}

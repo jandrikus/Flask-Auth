@@ -18,10 +18,10 @@ class Auth__Settings(object):
 
 	#: The application name displayed in email templates and page template footers.
 	AUTH_APP_NAME = 'AUTH_APP_NAME'
+	AUTH_LOGO_IMG_URL = ''
 
 	#: | Sender's email address.
 	#: | Required for sending emails.
-	#: | Derived from MAIL_DEFAULT_SENDER or DEFAULT_MAIL_SENDER when specified.
 	AUTH_EMAIL_SENDER_EMAIL = ''
 	AUTH_EMAIL_SENDER_PASSWORD = ''
 	AUTH_EMAIL_SENDER_SMTP = ''
@@ -65,6 +65,7 @@ class Auth__Settings(object):
 
 	#: Automatic sign-in if the user session has not expired.
 	AUTH_AUTO_LOGIN = True
+	AUTH_ENDPOINT_AFTER_LOGIN = ''
 
 	#: | Allow unregistered users to register.
 	#: | Depends on AUTH_ENABLE_EMAIL=True or AUTH_ENABLE_USERNAME=True.

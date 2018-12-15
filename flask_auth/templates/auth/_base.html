@@ -20,15 +20,23 @@
 
 			{% block content %}
 				<div class="container-fluid">
+					{% block flashed_messages %}
+						{% with messages = get_flashed_messages() %}
+							{% if messages %}
+								<ul class=flashes>
+									{% for message in messages %}
+										<li>{{ message }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						{% endwith %}
+					{% endblock flashed_messages %}
 					{% block container %}
 					{% endblock container %}
 				</div>
 			{% endblock content %}
 
 			{% block footer %}
-				<footer>
-					{% include 'auth/_footer.html' %}
-				</footer>
 			{% endblock footer %}
 		{% endblock body %}
 

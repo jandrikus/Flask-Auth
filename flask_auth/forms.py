@@ -141,9 +141,6 @@ class ChangeUsernameForm(FlaskForm):
 
 class LoginForm(FlaskForm):
 	"""Login form."""
-	next = HiddenField()         # for login.html
-	reg_next = HiddenField()     # for login_or_register.html
-
 	username = StringField(_l('Username'), validators=[
 		validators.DataRequired(_l('Username is required')),
 	])
@@ -167,10 +164,10 @@ class LoginForm(FlaskForm):
 	def validate(self):
 		# Remove fields depending on configuration
 		auth = current_app.auth
-		if not auth.AUTH_ENABLE_LOGIN_BY_USERNAME:
-			delattr(self, 'username')
-		if not auth.AUTH_ENABLE_LOGIN_BY_EMAIL:
+		if auth.AUTH_ENABLE_LOGIN_BY_USERNAME:
 			delattr(self, 'email')
+		else:
+			delattr(self, 'username')
 
 		# Validate field-validators
 		if not super(LoginForm, self).validate():
@@ -222,7 +219,7 @@ class LoginForm(FlaskForm):
 			username_or_email_field.errors.append(message)
 			self.password.errors.append(message)
 
-		return False  # Unsuccessful authentication
+		return False # Unsuccessful authentication
 
 class RegisterForm(FlaskForm):
 	"""Register new user form."""

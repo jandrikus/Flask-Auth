@@ -1,10 +1,7 @@
 {% extends 'auth/email/base.txt' %}
 
 {% block message %}
-	Your password has been changed.
+	Welcome here
 
-	{% if auth.enable_forgot_password -%}
-		If you did not initiate this password change, click the link below to reset it.
-			{{ url_for('auth.forgot_password', _external=True) }}
-	{% endif -%}
+	Some welcome information.
 {% endblock %}

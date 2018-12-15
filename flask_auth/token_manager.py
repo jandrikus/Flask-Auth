@@ -34,24 +34,22 @@ class TokenManager(object):
 		if len(key)<32:
 			print('WARNING: Flask-User TokenManager: SECRET_KEY is shorter than 32 bytes.')
 
-	def generate_reset_password_token(self, user, expires_in=600):
+	def generate_reset_password_token(self, user):
 		return jwt.encode(
-			{'reset_password': user.id, 'exp': time() + expires_in},
+			{'reset_password': user.id, 'exp': time() + self.auth.AUTH_RESET_PASSWORD_EXPIRATION},
 			self.app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
-	def verify_reset_password_token(token):
+	def verify_reset_password_token(self, token):
 		try:
 			id = jwt.decode(token, self.app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
 		except:
 			return
 		return self.auth.db_manager.get_user_by_id(id)
 
-	def generate_confirm_account_token(self, user, expires_in=600):
-		return jwt.encode(
-			{'verify_account': user.id, 'exp': time() + expires_in},
-			self.app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+	def generate_confirm_account_token(self, user):
+		return jwt.encode({'verify_account': user.id, 'exp': time() + self.auth.AUTH_CONFIRM_ACCOUNT_EXPIRATION}, self.app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
-	def verify_confirm_account_token(token):
+	def verify_confirm_account_token(self, token):
 		try:
 			id = jwt.decode(token, self.app.config['SECRET_KEY'], algorithms=['HS256'])['verify_account']
 		except:

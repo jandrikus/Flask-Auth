@@ -16,6 +16,7 @@ def send_email(subject, receiver, plain_text, html_text = '', replyr = None, sen
 	msg['Date'] = datetime.utcnow()
 	msg['Message-ID'] = make_msgid()
 	msg['Subject'] = subject
+	print(current_app.auth.AUTH_EMAIL_SENDER_PASSWORD)
 	if sender:
 		msg['From'] = Address(sender[0], sender[1].split('@')[0], sender[1].split('@')[1])
 	else:
@@ -26,10 +27,15 @@ def send_email(subject, receiver, plain_text, html_text = '', replyr = None, sen
 	msg.set_content(plain_text)
 	if html_text:
 		msg.add_alternative(html_text, subtype='html')
-	server = smtplib.SMTP(current_app.auth.AUTH_SENDER_EMAIL_SMTP, 587)
-	server.ehlo()
-	server.starttls()
-	server.ehlo()
-	server.login(current_app.auth.AUTH_EMAIL_SENDER_EMAIL, current_app.auth.AUTH_EMAIL_SENDER_PASSWORD)
-	server.send_message(msg)
-	server.quit()
+	server = smtplib.SMTP(current_app.auth.AUTH_EMAIL_SENDER_SMTP, 587)
+	try:
+		server.ehlo()
+		server.starttls()
+		server.ehlo()
+		server.login(current_app.auth.AUTH_EMAIL_SENDER_EMAIL, current_app.auth.AUTH_EMAIL_SENDER_PASSWORD)
+		server.send_message(msg)
+		server.quit()
+		return None
+	except Exception as e:
+		current_app.logger.error("failed to send mail: "+str(e))
+		return render_template('auth/email/error.html')

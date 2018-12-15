@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
-{% from 'auth/lib.html' import account_verification with context %}
+{% extends 'auth/_base.html' %}
+{% from 'auth/_lib.html' import account_verification with context %}
 
 {% block head %}
 	{{ super() }}
@@ -20,5 +20,5 @@
 		</ol>
 	</div>
 	<h1 class="h3 mb-3 font-weight-normal">{{ _("Account verification") }}</h1>
-	{{ account_verification(url_for('auth.get_verify_account_token'), email=current_user.student_email, sent=sent) }}
+	{{ account_verification(url_for('auth.resend_account_verification'), email=email, resent=resent) }}
 {% endblock container %}

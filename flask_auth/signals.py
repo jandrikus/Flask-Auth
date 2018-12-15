@@ -22,6 +22,9 @@ auth_changed_password = _signals.signal('auth.auth_changed_password')
 # Sent when a user changed their username
 auth_changed_username = _signals.signal('auth.auth_changed_username')
 
+# Sent when a user changed their email
+auth_changed_email = _signals.signal('auth.auth_changed_email')
+
 # Sent when a user confirmed the account
 auth_confirmed_account = _signals.signal('auth.auth_confirmed_account')
 

@@ -32,8 +32,10 @@ class PasswordManager(object):
 			``user.password = hash_password('mypassword')``
 		"""
 		# Use passlib's CryptContext to hash a password
-		password_hash = self.password_crypt_context.encrypt(password)
-		return password_hash
+		if self.auth.AUTH_ENABLE_PASSWORD_HASH:
+			return self.password_crypt_context.encrypt(password)
+		else:
+			return password
 
 	def verify_password(self, password, password_hash):
 		"""
@@ -51,7 +53,10 @@ class PasswordManager(object):
 					login_user(user)
 		"""
 		# Use passlib's CryptContext to verify a password
-		return self.password_crypt_context.verify(password, password_hash)
+		if self.auth.AUTH_ENABLE_PASSWORD_HASH:
+			return self.password_crypt_context.verify(password, password_hash)
+		else:
+			return password == password_hash
 
 	def set_password(self, password, user):
 		user.password = self.hash_password(password)

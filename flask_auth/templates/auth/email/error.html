@@ -1,0 +1,15 @@
+{% extends 'auth/_base.html' %}
+
+{% block head %}
+	{{ super() }}
+	<title>{%trans%}Error sending email{%endtrans%}</title>
+{% endblock head %}
+
+{% block container %}
+	<h1>{%trans%}Error sending email{%endtrans%}</h1>
+	<p>
+		{%trans%}
+			There was a problem with the mailing provider. The server might be out of service. Please, try again later.
+		{%endtrans%}
+	</p>
+{% endblock container %}

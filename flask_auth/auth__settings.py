@@ -16,39 +16,33 @@ class Auth__Settings(object):
 	"""
 	#: | Settings for registration
 
-	#: | Allow users to login and register with an email address
+	#: The application name displayed in email templates and page template footers.
+	AUTH_APP_NAME = 'AUTH_APP_NAME'
+
+	#: | Sender's email address.
+	#: | Required for sending emails.
+	#: | Derived from MAIL_DEFAULT_SENDER or DEFAULT_MAIL_SENDER when specified.
+	AUTH_EMAIL_SENDER_EMAIL = ''
+	AUTH_EMAIL_SENDER_PASSWORD = ''
+	AUTH_EMAIL_SENDER_SMTP = ''
+
+	#: | Sender's name.
+	#: | Optional. Defaults to AUTH_APP_NAME setting.
+	AUTH_EMAIL_SENDER_NAME = ''
+
+	#: | Allow users to use an email address
 	AUTH_ENABLE_EMAIL = True
 
-	#: | Allow users to login and register with a username
+	#: | Allow users to use an username
 	AUTH_ENABLE_USERNAME = True
 
-	#: | Allow users to change their username.
+	#: | Allow users to login with an username
 	#: | Depends on AUTH_ENABLE_USERNAME=True.
-	AUTH_ENABLE_CHANGE_USERNAME = True
+	AUTH_ENABLE_LOGIN_BY_USERNAME = True
 
-	#: | Allow users to change their password.
-	AUTH_ENABLE_CHANGE_PASSWORD = True
-
-	#: | Require users to verify/confirm the account.
-	AUTH_ENABLE_CONFIRM_ACCOUNT = True
-
-	#: | If True, the app will look for a custom method to select
-	#: | the desired email address to send the security driven emails
-	#: | Override -> class CustomEmailManager(EmailManager)
-	#: | and use customize() method in Auth
-	AUTH_ENABLE_CUSTOM_SPECIFIC_EMAIL_FOR_TOKEN = False
-
-	#: | Enable account verification/confirmation emails to be sent.
+	#: | Allow users to login with an email address
 	#: | Depends on AUTH_ENABLE_EMAIL=True.
-	#: | Depends on AUTH_ENABLE_CONFIRM_ACCOUNT=True.
-	AUTH_ENABLE_CONFIRM_ACCOUNT_EMAIL = True
-
-	#: | Allow users to reset their passwords.
-	#: | Depends on AUTH_ENABLE_EMAIL=True.
-	AUTH_ENABLE_FORGOT_PASSWORD = True
-
-	#: | Allow unregistered users to register.
-	AUTH_ENABLE_REGISTER = True
+	AUTH_ENABLE_LOGIN_BY_EMAIL = True
 
 	#: | Remember user sessions across browser restarts.
 	#:
@@ -58,60 +52,63 @@ class Auth__Settings(object):
 	#:     Generic settings and their defaults
 	AUTH_ENABLE_REMEMBER_ME = True
 
-	#: The application name displayed in email templates and page template footers.
-	AUTH_APP_NAME = 'AUTH_APP_NAME'
-
-	#: Automatic sign-in if the user session has not expired.
-	AUTH_AUTO_LOGIN = True
-
-	#: Automatic sign-in after a user verifies/confirms the account.
-	AUTH_AUTO_LOGIN_AFTER_CONFIRM = True
-
-	#: Automatic sign-in after a user registers.
-	#: | Depends on AUTH_ENABLE_CONFIRM_ACCOUNT=False.
-	AUTH_AUTO_LOGIN_AFTER_REGISTER = True
-
-	#: Automatic sign-in after a user resets their password.
-	AUTH_AUTO_LOGIN_AFTER_RESET_PASSWORD = True
+	#: | User session token expiration in seconds.
+	#: | Default is 1 hour (1*3600 seconds).
+	#:
+	#: .. This hack shows a header above the _next_ section
+	#: .. code-block:: none
+	#:
+	AUTH_USER_SESSION_EXPIRATION = 1*3600
 
 	#: Automatic sign-in at the login form (if the user session has not expired).
 	AUTH_AUTO_LOGIN_AT_LOGIN = True
 
-	#: | Sender's email address.
-	#: | Required for sending emails.
-	#: | Derived from MAIL_DEFAULT_SENDER or DEFAULT_MAIL_SENDER when specified.
-	AUTH_EMAIL_SENDER_EMAIL = ''
+	#: Automatic sign-in if the user session has not expired.
+	AUTH_AUTO_LOGIN = True
 
-	#: | Sender's name.
-	#: | Optional. Defaults to AUTH_APP_NAME setting.
-	AUTH_EMAIL_SENDER_NAME = ''
-
-	#: | The way Flask-User handles case insensitive searches.
-	#: | Valid options are:
-	#: | - 'ifind' (default): Use the case insensitive ifind_first_object()
-	#: | - 'nocase_collation': username and email fields must be configured
-	#: |     with an case insensitve collation (collation='NOCASE' in SQLAlchemy)
-	#: |     so that a regular find_first_object() can be performed.
-	AUTH_IFIND_MODE = 'ifind'
-
-	#: | Send notification email after a password change.
-	#: | Depends on AUTH_ENABLE_EMAIL=True.
-	AUTH_SEND_PASSWORD_CHANGED_EMAIL = True
+	#: | Allow unregistered users to register.
+	#: | Depends on AUTH_ENABLE_EMAIL=True or AUTH_ENABLE_USERNAME=True.
+	AUTH_ENABLE_REGISTER = True
 
 	#: | Send wellcome notification email after a registration.
-	#: | Depends on AUTH_ENABLE_EMAIL=True.
 	AUTH_SEND_WELLCOME_EMAIL = True
 
+	#: | Automatic sign-in after a user registers.
+	#: | Depends on AUTH_ENABLE_REGISTER=True.
+	AUTH_AUTO_LOGIN_AFTER_REGISTER = True
+
+	#: | Allow users to change their username.
+	#: | Depends on AUTH_ENABLE_USERNAME=True.
+	AUTH_ENABLE_CHANGE_USERNAME = True
+
 	#: | Send notification email after a username change.
-	#: | Depends on AUTH_ENABLE_EMAIL=True.
+	#: | Depends on AUTH_ENABLE_CHANGE_USERNAME=True.
 	AUTH_SEND_USERNAME_CHANGED_EMAIL = True
 
-	#: | Send notification email after a email change.
+	#: | Allow users to change their email.
 	#: | Depends on AUTH_ENABLE_EMAIL=True.
+	AUTH_ENABLE_CHANGE_EMAIL = True
+
+	#: | Send notification email after a email change.
+	#: | Depends on AUTH_ENABLE_CHANGE_EMAIL=True.
 	AUTH_SEND_EMAIL_CHANGED_EMAIL = True
 
+	#: | Allow users to change their password.
+	AUTH_ENABLE_CHANGE_PASSWORD = True
+
+	#: | Send notification email after a password change.
+	#: | Depends on AUTH_ENABLE_CHANGE_PASSWORD=True.
+	AUTH_SEND_PASSWORD_CHANGED_EMAIL = True
+
+	#: | Require users to verify/confirm the account.
+	AUTH_ENABLE_CONFIRM_ACCOUNT = True
+
+	#: | Email confirmation token expiration in seconds.
+	#: | Default is 1 days (1*24*3600 seconds).
+	AUTH_CONFIRM_ACCOUNT_EXPIRATION = 1*24*3600
+
 	#: | Ensure that users can login only with a confirmed account.
-	#: | Depends on AUTH_ENABLE_EMAIL=True.
+	#: | Depends on AUTH_ENABLE_CONFIRM_ACCOUNT=True.
 	#:
 	#: This setting works in tandem with the ``@allow_unconfirmed_account``
 	#: view decorator to allow users without confirmed account
@@ -124,8 +121,42 @@ class Auth__Settings(object):
 	#:         as they relax security requirements.
 	#:     | Make sure that decorated views **never call other views directly**.
 	#:         Allways se ``redirect()`` to ensure proper view protection.
-
 	AUTH_ALLOW_LOGIN_WITHOUT_CONFIRMED_ACCOUNT = False
+
+	#: | Automatic sign-in after a user verifies/confirms the account.
+	#: | Depends on AUTH_ENABLE_CONFIRM_ACCOUNT=True.
+	AUTH_AUTO_LOGIN_AFTER_CONFIRM = True
+
+	#: | Allow users to reset their passwords.
+	AUTH_ENABLE_FORGOT_PASSWORD = True
+
+	#: | Reset password token expiration in seconds.
+	#: | Default is 1 days (1*24*3600 seconds).
+	AUTH_RESET_PASSWORD_EXPIRATION = 1*24*3600
+
+	#: | Depends on AUTH_ENABLE_FORGOT_PASSWORD=True.
+	AUTH_ENABLE_FORGOT_PASSWORD_BY_USERNAME = True
+
+	#: | Depends on AUTH_ENABLE_FORGOT_PASSWORD=True.
+	AUTH_ENABLE_FORGOT_PASSWORD_BY_EMAIL = True
+
+	#: | Automatic sign-in after a user resets their password.
+	#: | Depends on AUTH_ENABLE_FORGOT_PASSWORD=True.
+	AUTH_AUTO_LOGIN_AFTER_RESET_PASSWORD = True
+
+	#: | If True, the app will look for a custom method to select
+	#: | the desired email address to send the security driven emails
+	#: | Override -> class CustomEmailManager(EmailManager)
+	#: | and use customize() method in Auth
+	AUTH_ENABLE_CUSTOM_SPECIFIC_EMAIL = False
+
+	#: | The way Flask-User handles case insensitive searches.
+	#: | Valid options are:
+	#: | - 'ifind' (default): Use the case insensitive ifind_first_object()
+	#: | - 'nocase_collation': username and email fields must be configured
+	#: |     with an case insensitve collation (collation='NOCASE' in SQLAlchemy)
+	#: |     so that a regular find_first_object() can be performed.
+	AUTH_IFIND_MODE = 'ifind'
 
 	#: | Require users to retype their password.
 	#: | Affects registration, change password and reset password forms.
@@ -139,23 +170,8 @@ class Auth__Settings(object):
 	#: | Depends on AUTH_ENABLE_USERNAME=True.
 	AUTH_SHOW_USERNAME_DOES_NOT_EXIST = False
 
-	#: | User session token expiration in seconds.
-	#: | Default is 1 hour (1*3600 seconds).
-	#:
-	#: .. This hack shows a header above the _next_ section
-	#: .. code-block:: none
-	#:
 	#:     Password hash settings
-	AUTH_USER_SESSION_EXPIRATION = 1*3600
-
-	#: | Email confirmation token expiration in seconds.
-	#: | Default is 2 days (2*24*3600 seconds).
-	AUTH_CONFIRM_EMAIL_EXPIRATION = 2*24*3600
-
-	#: | Reset password token expiration in seconds.
-	#: | Default is 2 days (2*24*3600 seconds).
-	AUTH_RESET_PASSWORD_EXPIRATION = 2*24*3600
-
+	AUTH_ENABLE_PASSWORD_HASH = True
 	#: | List of accepted password hashes.
 	#: | See `Passlib CryptContext docs on Constructor Keyword ``'schemes'`` <http://passlib.readthedocs.io/en/stable/lib/passlib.context.html?highlight=cryptcontext#constructor-keywords>`_
 	#: | Example: ``['bcrypt', 'argon2']``

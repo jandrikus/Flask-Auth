@@ -108,6 +108,10 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		# Setup default LoginManager using Flask-Login
 		self.login_manager = LoginManager(app)
 		self.login_manager.login_view = 'auth.login'
+		# Flask-Login calls this function to retrieve a User record by token.
+		@self.login_manager.user_loader
+		def load_user(id):
+			return self.db_manager.get_user_by_id(int(id))
 
 		# Configure Flask-BabelEx
 		# -----------------------
@@ -159,8 +163,7 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		self.password_manager = PasswordManager(app)
 
 		# Setup EmailManager
-		if self.AUTH_ENABLE_EMAIL:
-			self.email_manager = EmailManager(app)
+		self.email_manager = EmailManager(app)
 
 		# Setup TokenManager
 		self.token_manager = TokenManager(app)
@@ -198,11 +201,11 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		# Check for invalid settings
 		# --------------------------
 
-		# Check that AUTH_EMAIL_SENDER_EMAIL is set when AUTH_ENABLE_EMAIL is True
-		if not self.AUTH_EMAIL_SENDER_EMAIL and self.AUTH_ENABLE_EMAIL:
+		# Check that AUTH_EMAIL_SENDER_EMAIL is set True
+		if not self.AUTH_EMAIL_SENDER_EMAIL:
 			raise ConfigError(
-				'AUTH_EMAIL_SENDER_EMAIL is missing while AUTH_ENABLE_EMAIL is True.'\
-				' specify AUTH_EMAIL_SENDER_EMAIL (and AUTH_EMAIL_SENDER_NAME) or set AUTH_ENABLE_EMAIL to False.')
+				'AUTH_EMAIL_SENDER_EMAIL is missing.'\
+				' specify AUTH_EMAIL_SENDER_EMAIL (and AUTH_EMAIL_SENDER_NAME).')
 
 		# Disable settings that rely on a feature setting that's not enabled
 		# ------------------------------------------------------------------
@@ -211,18 +214,38 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		if not self.AUTH_ENABLE_USERNAME and not self.AUTH_ENABLE_EMAIL:
 			self.AUTH_ENABLE_REGISTER = False
 
-		# Settings that depend on AUTH_ENABLE_EMAIL
+		if not self.AUTH_ENABLE_REGISTER:
+			self.AUTH_AUTO_LOGIN_AFTER_REGISTER = False
+
+		# Settings that depend on AUTH_ENABLE_EMAIL=True
 		if not self.AUTH_ENABLE_EMAIL:
-			self.AUTH_ENABLE_CONFIRM_EMAIL = False
-			self.AUTH_ENABLE_MULTIPLE_EMAILS = False
-			self.AUTH_ENABLE_FORGOT_PASSWORD = False
-			self.AUTH_SEND_PASSWORD_CHANGED_EMAIL = False
-			self.AUTH_SEND_REGISTERED_EMAIL = False
+			self.AUTH_ENABLE_LOGIN_BY_EMAIL = False
+			self.AUTH_ENABLE_CHANGE_EMAIL = False
+			self.AUTH_SHOW_EMAIL_DOES_NOT_EXIST = False
+
+		# Settings that depend on AUTH_ENABLE_USERNAME=True
+		if not self.AUTH_ENABLE_USERNAME:
+			self.AUTH_ENABLE_LOGIN_BY_USERNAME = False
+			self.AUTH_ENABLE_CHANGE_USERNAME = False
+			self.AUTH_SHOW_USERNAME_DOES_NOT_EXIST = False
+
+		if not self.AUTH_ENABLE_CHANGE_USERNAME:
 			self.AUTH_SEND_USERNAME_CHANGED_EMAIL = False
 
-		# Settings that depend on AUTH_ENABLE_USERNAME
-		if not self.AUTH_ENABLE_USERNAME:
-			self.AUTH_ENABLE_CHANGE_USERNAME = False
+		if not self.AUTH_ENABLE_CHANGE_EMAIL:
+			self.AUTH_SEND_EMAIL_CHANGED_EMAIL = False
+
+		if not self.AUTH_ENABLE_CHANGE_PASSWORD:
+			self.AUTH_SEND_PASSWORD_CHANGED_EMAIL = False
+
+		if not self.AUTH_ENABLE_CONFIRM_ACCOUNT:
+			self.AUTH_ALLOW_LOGIN_WITHOUT_CONFIRMED_ACCOUNT = False
+			self.AUTH_AUTO_LOGIN_AFTER_CONFIRM = False
+			
+		if not self.AUTH_ENABLE_FORGOT_PASSWORD:
+			self.AUTH_ENABLE_FORGOT_PASSWORD_BY_USERNAME = False
+			self.AUTH_ENABLE_FORGOT_PASSWORD_BY_EMAIL = False
+			self.AUTH_AUTO_LOGIN_AFTER_RESET_PASSWORD = False
 
 	def _add_url_routes(self):
 		"""
@@ -241,14 +264,15 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		def change_username_stub():
 			if not self.AUTH_ENABLE_CHANGE_USERNAME: abort(404)
 			return self.change_username()
-		def confirm_account_stub():
-			if not self.AUTH_ENABLE_CONFIRM_ACCOUNT: abort(404)
-			return self.confirm_account()
+		def change_email_stub():
+			if not self.AUTH_ENABLE_CHANGE_EMAIL: abort(404)
+			return self.change_email()
 		def forgot_password_stub():
 			if not self.AUTH_ENABLE_FORGOT_PASSWORD: abort(404)
 			return self.forgot_password()
-		def change_email_stub():
-			return self.change_email()
+		def reset_password_stub(token):
+			if not self.AUTH_ENABLE_FORGOT_PASSWORD: abort(404)
+			return self.reset_password(token)
 		def login_stub():
 			return self.login()
 		def logout_stub():
@@ -262,9 +286,9 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		def resend_account_verification_stub():
 			if not self.AUTH_ENABLE_CONFIRM_ACCOUNT: abort(404)
 			return self.resend_account_verification()
-		def reset_password_stub(token):
-			if not self.AUTH_ENABLE_FORGOT_PASSWORD: abort(404)
-			return self.reset_password(token)
+		def confirm_account_stub(token):
+			if not self.AUTH_ENABLE_CONFIRM_ACCOUNT: abort(404)
+			return self.confirm_account(token)
 		def unauthenticated_stub():
 			return self.unauthenticated()
 		def unauthorized_stub():
@@ -273,14 +297,14 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		# ------------------
 		self.blueprint.add_url_rule('change_password', 'change_password', change_password_stub, methods=['GET', 'POST'])
 		self.blueprint.add_url_rule('change_username', 'change_username', change_username_stub, methods=['GET', 'POST'])
-		self.blueprint.add_url_rule('confirm_account/<token>', 'confirm_account', confirm_account_stub, methods=['GET'])
-		self.blueprint.add_url_rule('forgot_password', 'forgot_password', forgot_password_stub, methods=['GET', 'POST'])
 		self.blueprint.add_url_rule('change_email', 'change_email', change_email_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('forgot_password', 'forgot_password', forgot_password_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('reset_password/<token>', 'reset_password', reset_password_stub, methods=['GET', 'POST'])
 		self.blueprint.add_url_rule('login', 'login', login_stub, methods=['GET', 'POST'])
 		self.blueprint.add_url_rule('logout', 'logout', logout_stub, methods=['GET'])
 		self.blueprint.add_url_rule('register', 'register', register_stub, methods=['GET', 'POST'])
 		self.blueprint.add_url_rule('register/account_verification', 'account_verification', account_verification_stub, methods=['GET'])
 		self.blueprint.add_url_rule('register/resend_account_verification', 'resend_account_verification', resend_account_verification_stub, methods=['GET'])
-		self.blueprint.add_url_rule('reset_password/<token>', 'reset_password', reset_password_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('register/confirm_account/<token>', 'confirm_account', confirm_account_stub, methods=['GET'])
 		self.blueprint.add_url_rule('unauthenticated', 'unauthenticated', unauthenticated_stub, methods=['GET'])
 		self.blueprint.add_url_rule('unauthorized', 'unauthorized', unauthorized_stub, methods=['GET'])

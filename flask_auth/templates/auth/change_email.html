@@ -1,0 +1,11 @@
+{% extends 'auth/_base.html' %}
+{% from 'auth/_lib.html' import form_change_email with context %}
+
+{% block head %}
+	{{ super() }}
+	<title>{%trans%}Change Email{%endtrans%}</title>
+{% endblock head %}
+
+{% block container %}
+	{{ form_change_email(url_for('auth.change_email'), form) }}
+{% endblock container %}

@@ -94,8 +94,6 @@ class DBManager(object):
 	def add_user(self, **kwargs):
 		# Add a User object, with properties specified in ``**kwargs``.
 		user = self.UserClass(**kwargs)
-		if hasattr(user, 'active'):
-			user.active = True
 		self.db_adapter.add_object(user)
 		return user
 
@@ -145,16 +143,6 @@ class DBManager(object):
 		# Save the User object.
 		self.db_adapter.save_object(user)
 
-	def user_has_confirmed_account(self, user):
-		"""
-		| Returns True if user has a confirmed account.
-		| Returns False otherwise.
-		"""
-		if not self.auth.AUTH_ENABLE_EMAIL: return True
-		if not self.auth.AUTH_ENABLE_CONFIRM_ACCOUNT: return True
-		# Handle single contact email per user
-		return True if user.verified else False
-
 	# Database management methods
 	# ---------------------------
 
@@ -169,4 +157,3 @@ class DBManager(object):
 		.. warning:: ALL DATA WILL BE LOST. Use only for automated testing.
 		"""
 		return self.db_adapter.drop_all_tables()
-

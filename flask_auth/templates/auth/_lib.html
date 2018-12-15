@@ -113,7 +113,7 @@
 			</div>
 		</div>
 		{# Password #}
-		{% set field = form.password %}
+		{% set field = form.new_password %}
 		<div class="form-group row {% if field.errors %}has-error{% endif %}">
 			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
 			<div class="col-sm-8">
@@ -145,6 +145,13 @@
 	<form action="{{ endpoint_change_username }}" class="form-group" method="post">
 		{{ form.hidden_tag() }}
 		<h1 class="h3 mb-3 font-weight-normal">{%trans%}Change username{%endtrans%}</h1>
+		{# Current username #}
+		<div class="form-group row">
+			<label for="current_username" class="col-sm-4 col-form-label">{%trans%}Current username{%endtrans%}</label>
+			<div class="col-sm-8">
+				<p class="form-control" id="current_username">{{ current_user.username }}</p>
+			</div>
+		</div>
 		{# New username #}
 		{% set field = form.new_username %}
 		<div class="form-group row {% if field.errors %}has-error{% endif %}">
@@ -167,6 +174,33 @@
 					<p class="form-text" style="color: red;">{{ error }}</p>
 				{% endfor %}
 				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your current password") }}.</small>
+			</div>
+		</div>
+		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
+	</form>
+{% endmacro %}
+
+{% macro form_change_email(endpoint_change_email, form) %}
+	<form action="{{ endpoint_change_email }}" class="form-group" method="post">
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal">{%trans%}Change Email{%endtrans%}</h1>
+		{# Current email #}
+		<div class="form-group row">
+			<label for="current_email" class="col-sm-4 col-form-label">{%trans%}Current Email{%endtrans%}</label>
+			<div class="col-sm-8">
+				<p class="form-control" id="current_email">{{ current_user.email }}</p>
+			</div>
+		</div>
+		{# New email #}
+		{% set field = form.email %}
+		<div class="form-group row {% if field.errors %}has-error{% endif %}">
+			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+			<div class="col-sm-8">
+				{{ field(class='form-control') }}
+				{% for error in field.errors %}
+					<p class="form-text" style="color: red;">{{ error }}</p>
+				{% endfor %}
+				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your new email") }}.</small>
 			</div>
 		</div>
 		{{ form.submit(class='btn btn-lg btn-primary btn-block') }}
@@ -315,7 +349,7 @@
 	</form>
 {% endmacro %}
 
-{% macro form_reset_password(endpoint_reset_password) %}
+{% macro form_reset_password(endpoint_reset_password, form) %}
 	<form action="{{ endpoint_reset_password }}" class="form-group" method="post">
 		{{ form.hidden_tag() }}
 		<h1 class="h3 mb-3 font-weight-normal">{%trans%}Reset password{%endtrans%}</h1>
@@ -348,7 +382,7 @@
 	</form>
 {% endmacro %}
 
-{% macro account_verification(endpoint_resend_account_verification, email, sent=False) %}
+{% macro account_verification(endpoint_resend_account_verification, email, resent=False) %}
 	<div class="form-group row">
 		<label for="verify_account" class="col-sm-4 col-form-label">{{ _("Verify yourself") }}</label>
 		<div class="col-sm-6">
@@ -359,8 +393,8 @@
 		<div class="col-sm-2">
 			<a class="btn btn-primary" href="{{ endpoint_resend_account_verification }}">{{ _("Resend email") }}</a>
 		</div>
-		{% if sent %}
-			<p>{{ _("New email sent") }}</p>
+		{% if resent %}
+			<p>{{ _("New email resent") }}</p>
 		{% endif %}
 	</div>
 {% endmacro %}

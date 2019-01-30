@@ -23,11 +23,13 @@
 					{% block flashed_messages %}
 						{% with messages = get_flashed_messages() %}
 							{% if messages %}
-								<ul class=flashes>
+								<div class="flashes">
 									{% for message in messages %}
-										<li>{{ message }}</li>
+										<div class="alert alert-primary" role="alert">
+											{{ message }}
+										</div>
 									{% endfor %}
-								</ul>
+								</div>
 							{% endif %}
 						{% endwith %}
 					{% endblock flashed_messages %}

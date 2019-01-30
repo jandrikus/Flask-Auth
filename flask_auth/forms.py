@@ -229,12 +229,16 @@ class RegisterForm(FlaskForm):
 		validators.Length(max=63),
 		unique_username_validator
 	])
+	name = StringField(_l('Name'), validators=[
+		validators.DataRequired(),
+		validators.Length(max=255)
+	])
 	first_name = StringField(_l('First name'), validators=[
-		validators.InputRequired(),
+		validators.DataRequired(),
 		validators.Length(max=63)
 	])
 	last_name = StringField(_l('Last name(s)'), validators=[
-		validators.InputRequired(),
+		validators.DataRequired(),
 		validators.Length(max=127)
 	])
 	email = StringField(_l('Email'), validators=[
@@ -244,7 +248,7 @@ class RegisterForm(FlaskForm):
 		unique_email_validator
 	])
 	language = SelectField(_l('Language'), choices = current_app.config['AVAILABLE_LANGUAGES_TUPLE'], validators=[
-		validators.InputRequired(),
+		validators.DataRequired(),
 		validators.AnyOf(current_app.config['AVAILABLE_LANGUAGES'], message = _l('The language %(language)s is not supported yet'))
 	])
 	password = PasswordField(_l('Password'), validators=[
@@ -266,6 +270,11 @@ class RegisterForm(FlaskForm):
 			delattr(self, 'email')
 		if not auth.AUTH_REQUIRE_RETYPE_PASSWORD:
 			delattr(self, 'retype_password')
+		if auth.AUTH_USER_NAME_UNITED:
+			delattr(self, 'first_name')
+			delattr(self, 'last_name')
+		else:
+			delattr(self, 'name')
 
 		if not super(RegisterForm, self).validate():
 			return False

@@ -12,10 +12,10 @@ from flask_login import current_user
 
 _translations_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'translations')
 
-# Load Flask-User translations, if Flask-BabelEx has been installed
+# Load Flask-Auth translations, if Flask-BabelEx has been installed
 try:
 	from flask_babelex import Domain
-	# Retrieve Flask-User translations from the flask_user/translations directory
+	# Retrieve Flask-Auth translations from the flask_auth/translations directory
 	domain_translations = Domain(_translations_dir, domain='flask_auth')
 except ImportError:
 	domain_translations = None

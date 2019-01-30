@@ -30,6 +30,9 @@ class Auth__Settings(object):
 	#: | Optional. Defaults to AUTH_APP_NAME setting.
 	AUTH_EMAIL_SENDER_NAME = ''
 
+	#: | Tells if the user has a single column for name or two (each for first_name and last_name)
+	AUTH_USER_NAME_UNITED = False
+
 	#: | Allow users to use an email address
 	AUTH_ENABLE_EMAIL = True
 
@@ -70,6 +73,25 @@ class Auth__Settings(object):
 	#: | Allow unregistered users to register.
 	#: | Depends on AUTH_ENABLE_EMAIL=True or AUTH_ENABLE_USERNAME=True.
 	AUTH_ENABLE_REGISTER = True
+
+	#: | Keep a file with data about the users login at /data/stats/logins.txt
+	#: | Requires app.config['DATA_DIRECTORY'] with the full path to /data
+	AUTH_KEEP_LOGINS_FILE = False
+
+	#: | Append app.config['CURRENT_SEMESTER'] to the logins filename 'logins_{}.txt'.
+	#: | Depends on AUTH_KEEP_LOGINS_FILE=True.
+	AUTH_LOGINS_FILE_APPEND_CURRENT_SEMESTER = False
+
+	#: | Get IP address at login.
+	#: | Depends on AUTH_KEEP_LOGINS_FILE=True.
+	AUTH_LOGINS_FILE_WITH_IP = False
+
+	#: | Get City name given by IP address with IPStack.
+	#: | Depends on AUTH_KEEP_LOGINS_FILE=True and AUTH_LOGINS_FILE_WITH_IP=True and needs AUTH_IPSTACK_ACCESS_KEY.
+	AUTH_IPSTACK_ACCESS_KEY = ''
+	AUTH_LOGINS_FILE_WITH_CITY = False
+
+	AUTH_REGISTRATION_INVITE_EXPIRATION = 7*24*3600
 
 	#: | Send wellcome notification email after a registration.
 	AUTH_SEND_WELLCOME_EMAIL = True

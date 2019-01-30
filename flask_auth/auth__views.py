@@ -3,8 +3,11 @@
 # Author: Alejandro Alvarez <jandrikus@gmail.com>
 # Copyright (c) 2019 Alejandro Alvarez
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import quote, unquote
+import os
+import json
+import requests
 
 from flask import current_app, flash, redirect, render_template, request, url_for, abort
 from flask_login import current_user, login_user, logout_user
@@ -12,7 +15,6 @@ from flask_login import current_user, login_user, logout_user
 from .decorators import login_required, allow_unconfirmed_account
 from . import signals
 from .translation_utils import gettext as _  # map _() to gettext()
-
 
 # This class mixes into the Auth class.
 # Mixins allow for maintaining code and docs across several files.
@@ -118,16 +120,22 @@ class Auth__Views(object):
 				signals.auth_forgot_password.send(current_app._get_current_object(), user=user)
 				# The confirm_email email is sent to a specific email or user.email
 				if self.AUTH_ENABLE_CUSTOM_SPECIFIC_EMAIL:
-					email = self.db_manager.specific_email(user)
+					email = self.email_manager.specific_email(user)
 				else:
 					email = user.email
 				# Flash a system message
 				flash(_("A reset password email has been sent to '%(email)s'. Open that email and follow the instructions to reset your password.", email=email), 'success')
+				# Render the feedback page
+				feedback_title = _('Process completed')
+				feedback_message = _('An email to reset your password has been sent to %(email)s', email = email)+'\n'+'\n'+_("It may be likey redirected to your personal email account")+_('This process may last up to 10 minutes depending on the email provider')+'\n'+_('Look in your SPAM folder in case you don\'t get this message properly')
+				return render_template('auth/feedback.html', title = feedback_title, message = feedback_message)
 			else:
 				# Flash a system message
 				flash(_("The given information does not match"), 'error')
-			# Redirect to the login page
-			return redirect(self._endpoint_url('auth.login'))
+				# Render the feedback page
+				feedback_title = _('An error ocurred')
+				feedback_message = _('The given information does not match')
+				return render_template('auth/feedback.html', title = feedback_title, message = feedback_message)
 		# Render form
 		self.prepare_domain_translations()
 		return render_template('auth/forgot_password.html', form=form)
@@ -179,7 +187,6 @@ class Auth__Views(object):
 		if request.method == 'POST' and form.validate():
 			# Retrieve User
 			user = None
-			print('hehee2')
 			if self.AUTH_ENABLE_LOGIN_BY_USERNAME:
 				# Find user record by username
 				user = self.db_manager.find_user_by_username(form.username.data)
@@ -189,7 +196,6 @@ class Auth__Views(object):
 			else:
 				# Find user by email (with form.email)
 				user = self.db_manager.find_user_by_email(form.email.data)
-			print('hehee')
 			if user:
 				# Check if user has a confirmed account (if required)
 				if self.AUTH_ENABLE_CONFIRM_ACCOUNT and not self.AUTH_ALLOW_LOGIN_WITHOUT_CONFIRMED_ACCOUNT and not user.verified:
@@ -197,7 +203,6 @@ class Auth__Views(object):
 					flash(_('Your account has not yet been confirmed. Check your email Inbox and Spam folders for the confirmation email or <a href="%(url)s">Re-send confirmation email</a>.', url=url), 'error')
 					return redirect(url_for('auth.account_verification'))
 				# Log user in
-				print('here')
 				return self._do_login_user(user, safe_next_url, form.remember_me.data)
 		# Render form
 		self.prepare_domain_translations()
@@ -220,6 +225,11 @@ class Auth__Views(object):
 		# Display registration form and create new User.
 		if current_user.is_authenticated:
 			return redirect(self._endpoint_url())
+		# See if the system does not accept new registrations
+		if not self.AUTH_ENABLE_REGISTER:
+			feedback_title = _('You cannot register')
+			feedback_message = _('The registration system has been temporaly closed')
+			return render_template('auth/feedback.html', title=feedback_title, message=feedback_message)
 		# Initialize form
 		form = self.RegisterFormClass(request.form)
 		# Process valid POST
@@ -242,7 +252,7 @@ class Auth__Views(object):
 					return has_error # an html template with an error message
 				# The confirm_email email is sent to a specific email or user.email
 				if self.AUTH_ENABLE_CUSTOM_SPECIFIC_EMAIL:
-					email = self.db_manager.specific_email(user)
+					email = self.email_manager.specific_email(user)
 				else:
 					email = user.email
 				# Flash a system message
@@ -278,7 +288,7 @@ class Auth__Views(object):
 			return redirect(self._endpoint_url())
 		# The confirm_email email is sent to a specific email or current_user.email
 		if self.AUTH_ENABLE_CUSTOM_SPECIFIC_EMAIL:
-			email = self.db_manager.specific_email(current_user)
+			email = self.email_manager.specific_email(current_user)
 		else:
 			email = current_user.email
 		self.prepare_domain_translations()
@@ -295,7 +305,7 @@ class Auth__Views(object):
 			return has_error # an html template with an error message
 		# The confirm_email email is sent to a specific email or current_user.email
 		if self.AUTH_ENABLE_CUSTOM_SPECIFIC_EMAIL:
-			email = self.db_manager.specific_email(current_user)
+			email = self.email_manager.specific_email(current_user)
 		else:
 			email = current_user.email
 		# Flash a system message
@@ -314,7 +324,7 @@ class Auth__Views(object):
 		if user.verified:
 			return redirect(self._endpoint_url())
 		user.verified = True
-		user.verified_date = datetime.utcnow()
+		user.verified_date = datetime.utcnow()+timedelta(hours=1)
 		# Save object
 		self.db_manager.save_object(user)
 		self.db_manager.commit()
@@ -348,16 +358,43 @@ class Auth__Views(object):
 	def _do_login_user(self, user, safe_next_url='', remember_me=False):
 		# User must have been authenticated
 		if not user: return self.unauthenticated()
-		# Check if user account has been disabled
+		# Check if user account has been disabled##TODO
 		if user.disabled:
 			flash(_('Your account has been disabled.'), 'error')
-			return redirect(url_for('user.login'))
+			return redirect(url_for('auth.login'))
 		# Use Flask-Login to sign in user
 		login_user(user, remember=remember_me)
 		# Update last_seen_date
 		user.last_seen_date = datetime.utcnow()
 		self.db_manager.save_object(user)
 		self.db_manager.commit()
+		# Update logins file
+		if not current_app.config['DEBUG'] and self.AUTH_KEEP_LOGINS_FILE:
+			current_date_str = datetime.utcnow().strftime('%Y-%m-%d %H%M')
+			# Get IP
+			if self.AUTH_LOGINS_FILE_WITH_IP:
+				request_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+			if self.AUTH_LOGINS_FILE_WITH_CITY:
+				ipstack_access_key = self.AUTH_IPSTACK_ACCESS_KEY
+				url = f'http://api.ipstack.com/{request_ip}?access_key={ipstack_access_key}'
+				city = json.loads(requests.get(url).text)['city']
+			if self.AUTH_LOGINS_FILE_WITH_IP and self.AUTH_LOGINS_FILE_WITH_CITY:
+				login_line = f'{user.username} | {user.email} | {current_date_str} | {city} | {request_ip}\n'
+			elif self.AUTH_LOGINS_FILE_WITH_IP:
+				login_line = f'{user.username} | {user.email} | {current_date_str} | {request_ip}\n'
+			else:
+				login_line = f'{user.username} | {user.email} | {current_date_str}\n'
+			# Filename
+			login_filename = f'stats/logins.txt'
+			if self.AUTH_LOGINS_FILE_APPEND_CURRENT_SEMESTER:
+				# TODO make sure or tell if CURRENT_SEMESTER does not exist
+				current_semester = current_app.config['CURRENT_SEMESTER']
+				login_filename = f'stats/logins_{current_semester}.txt'
+			# Append line
+			# TODO make sure or tell if DATA_DIRECTORY does not exist
+			login_file_path = os.path.join(current_app.config['DATA_DIRECTORY'], login_filename)
+			with open(login_file_path, 'a') as login_file:
+				login_file.write(login_line)
 		# Send user_logged_in signal
 		signals.auth_logged_in.send(current_app._get_current_object(), user=user)
 		# Flash a system message

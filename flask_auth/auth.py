@@ -47,6 +47,7 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 
 	def init_app(
 		self, app, db, UserClass,
+		AnonymousUser=None,
 		RoleClass=None, # Only used for testing
 		):
 
@@ -90,9 +91,15 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 		# Setup default LoginManager using Flask-Login
 		self.login_manager = LoginManager(app)
 		self.login_manager.login_view = 'auth.login'
+		self.custom_anon = False
+		if AnonymousUser:
+			self.custom_anon = True
+			self.login_manager.anonymous_user = AnonymousUser
 		# Flask-Login calls this function to retrieve a User record by token.
 		@self.login_manager.user_loader
 		def load_user(id):
+			if self.custom_anon and not int(id):
+				return AnonymousUser()
 			return self.db_manager.get_user_by_id(int(id))
 
 		# Configure Flask-BabelEx
@@ -277,16 +284,16 @@ class Auth(Auth__Settings, Auth__Utils, Auth__Views):
 			return self.unauthorized()
 		# Add the URL routes
 		# ------------------
-		self.blueprint.add_url_rule('change_password', 'change_password', change_password_stub, methods=['GET', 'POST'])
-		self.blueprint.add_url_rule('change_username', 'change_username', change_username_stub, methods=['GET', 'POST'])
-		self.blueprint.add_url_rule('change_email', 'change_email', change_email_stub, methods=['GET', 'POST'])
-		self.blueprint.add_url_rule('forgot_password', 'forgot_password', forgot_password_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('change_password/', 'change_password', change_password_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('change_username/', 'change_username', change_username_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('change_email/', 'change_email', change_email_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('forgot_password/', 'forgot_password', forgot_password_stub, methods=['GET', 'POST'])
 		self.blueprint.add_url_rule('reset_password/<token>', 'reset_password', reset_password_stub, methods=['GET', 'POST'])
-		self.blueprint.add_url_rule('login', 'login', login_stub, methods=['GET', 'POST'])
-		self.blueprint.add_url_rule('logout', 'logout', logout_stub, methods=['GET'])
+		self.blueprint.add_url_rule('login/', 'login', login_stub, methods=['GET', 'POST'])
+		self.blueprint.add_url_rule('logout/', 'logout', logout_stub, methods=['GET'])
 		self.blueprint.add_url_rule('register', 'register', register_stub, methods=['GET', 'POST'])
 		self.blueprint.add_url_rule('register/account_verification', 'account_verification', account_verification_stub, methods=['GET'])
 		self.blueprint.add_url_rule('register/resend_account_verification', 'resend_account_verification', resend_account_verification_stub, methods=['GET'])
 		self.blueprint.add_url_rule('register/confirm_account/<token>', 'confirm_account', confirm_account_stub, methods=['GET'])
-		self.blueprint.add_url_rule('unauthenticated', 'unauthenticated', unauthenticated_stub, methods=['GET'])
-		self.blueprint.add_url_rule('unauthorized', 'unauthorized', unauthorized_stub, methods=['GET'])
+		self.blueprint.add_url_rule('unauthenticated/', 'unauthenticated', unauthenticated_stub, methods=['GET'])
+		self.blueprint.add_url_rule('unauthorized/', 'unauthorized', unauthorized_stub, methods=['GET'])

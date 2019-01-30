@@ -1,0 +1,11 @@
+{% extends 'auth/_base.html' %}
+{% from 'auth/_lib.html' import feedback %}
+
+{% block head %}
+	{{ super() }}
+	<title>{{ _("Feedback") }}</title>
+{% endblock head %}
+
+{% block container %}
+	{{ feedback(title, message) }}
+{% endblock container %}

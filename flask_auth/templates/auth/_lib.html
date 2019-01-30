@@ -1,3 +1,44 @@
+{% macro render_field(field) %}
+	<div class="form-group row {% if field.errors %}has-error{% endif %}">
+		<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+		<div class="col-sm-8">
+			{{ field(class='form-control') }}
+			{% for error in field.errors %}
+				<p class="form-text" style="color: red;">{{ error }}</p>
+			{% endfor %}
+		</div>
+	</div>
+{% endmacro %}
+{% macro render_field_dt(field) %}
+	<div class="form-group row {% if field.errors %}has-error{% endif %}">
+		<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+		<div class="col-sm-8">
+			<div class='input-group date' id='datetimepicker_{{ field.id }}' data-target-input="nearest">
+				{% set data_target = '#datetimepicker_'+field.id %}
+				{{ field(class='form-control datetimepicker-input', **{'data-toggle':data_target}) }}
+				<span class="input-group-append" data-target="#datetimepicker_{{ field.id }}" data-toggle="datetimepicker">
+					<div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+				</span>
+			</div>
+			{% for error in field.errors %}
+				<p class="form-text" style="color: red;">{{ error }}</p>
+			{% endfor %}
+		</div>
+		<script type="text/javascript">
+			$(function () {
+				$('#datetimepicker_{{ field.id }}').datetimepicker({
+					format: 'YYYY-MM-DD HH:mm:ss'
+				});
+			});
+		</script>
+	</div>
+{% endmacro %}
+
+{% macro feedback(title, message) %}
+	<h1>{{ title }}</h1>
+	<p style="white-space:pre-wrap;width:100%">{{ message|safe }}</p>
+{% endmacro %}
+
 {% macro form_login(form, endpoint_login, endpoint_register, endpoint_forgot, endpoint_index) %}
 	<form action="{{ endpoint_login }}" method="post" class="form-signin">
 		{% if auth.AUTH_LOGO_IMG_URL %}
@@ -219,39 +260,40 @@
 				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
 				<div class="col-sm-8">
 					{{ field(size=64, class='form-control') }}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your username") }}.</small>
 					{% for error in field.errors %}
 						<p class="form-text" style="color: red;">{{ error }}</p>
 					{% endfor %}
-					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your username") }}.</small>
 				</div>
 			</div>
 		{% endif %}
-		{# First name and Last name #}
-		{% set field = form.first_name %}
-		<div class="form-group row {% if field.errors %}has-error{% endif %}">
-			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
-			<div class="col-sm-8">
-				{{ field(size=64, class='form-control') }}
-				{% for error in field.errors %}
-					<p class="form-text" style="color: red;">{{ error }}</p>
-				{% endfor %}
-				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your first name") }}</small>
+		{% if auth.AUTH_USER_NAME_UNITED %}
+			{# Name #}
+			{% set field = form.name %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(size=255, class='form-control') }}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your name") }}</small>
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+				</div>
 			</div>
-		</div>
-		{% set field = form.last_name %}
-		<div class="form-group row {% if field.errors %}has-error{% endif %}">
-			<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
-			<div class="col-sm-8">
-				{{ field(size=128, class='form-control') }}
-				{% for error in field.errors %}
-					<p class="form-text" style="color: red;">{{ error }}</p>
-				{% endfor %}
-				<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your last names (name of your family)") }}</small>
+		{% else %}
+			{# First name and Last name #}
+			{% set field = form.first_name %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(size=64, class='form-control') }}
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your first name") }}</small>
+				</div>
 			</div>
-		</div>
-		{# Email #}
-		{% if auth.AUTH_ENABLE_EMAIL %}
-			{% set field = form.email %}
+			{% set field = form.last_name %}
 			<div class="form-group row {% if field.errors %}has-error{% endif %}">
 				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
 				<div class="col-sm-8">
@@ -259,7 +301,21 @@
 					{% for error in field.errors %}
 						<p class="form-text" style="color: red;">{{ error }}</p>
 					{% endfor %}
+					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("Your last names (name of your family)") }}</small>
+				</div>
+			</div>
+		{% endif %}
+		{# Email #}
+		{% if auth.AUTH_ENABLE_EMAIL %}
+			{% set field = form.email %}
+			<div class="form-group row {% if field.errors %}has-error{% endif %}">
+				<label for="{{ field.id }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+				<div class="col-sm-8">
+					{{ field(size=128, class='form-control') }}
 					<small id="{{ field.id }}Help" class="form-text text-muted">{{ _("A valid email address") }}.</small>
+					{% for error in field.errors %}
+						<p class="form-text" style="color: red;">{{ error }}</p>
+					{% endfor %}
 				</div>
 			</div>
 		{% endif %}
